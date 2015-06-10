@@ -1,5 +1,6 @@
 <?php
 $url = "http://clarin.feedsportal.com/c/33088/f/577682/index.rss";
+$max_elements = 4;
 
 
 $curl = curl_init();
@@ -31,35 +32,48 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 <!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN" "http://www.wapforum.org/DTD/wml_1.1.xml"> 
 <wml>
     <card title="Card1" id="Main" newcontext="false" ordered="true">
-    <p align="center">
-        <strong><?php echo $xml->channel->title; ?></strong>
-    </p>
-    <p align="left">
-        <?php
-        $cardnumber = 1;
+        <p align="center">
+            <strong><?php echo $xml->channel->title; ?></strong>
+        </p>
+        <p align="left">
+            <?php
+            $cardnumber = 1;
 
-        foreach ($xml->channel->item as $item) {
-            $cardnumber++;
-            if (strip_tags($item->description) != NULL) {
-                echo '<a href="#Card' . $cardnumber . '">' . $item->title . '</a><br/><br/>' . PHP_EOL;
+            foreach ($xml->channel->item as $item) {
+
+                if (strip_tags($item->description) != NULL) {
+                    $cardnumber++;
+                    echo '<a href="#Card' . $cardnumber . '">' . $item->title . '</a><br/><br/>' . PHP_EOL;
+                }
+
+                if ($cardnumber == $max_elements) {
+                    break;
+                }
             }
-        }
-        ?>
-    </p>
+            ?>
+        </p>
     </card>
-    <?php
+
+<?php
     $cardnumber = 1;
     foreach ($xml->channel->item as $item) {
-        $cardnumber++;
 
-        if (strip_tags($item->description) != NULL) {
-            ?>
-            <card id="Card<?php echo $cardnumber ?>" title="<?php echo $item->title ?>">
-            <p align="left">
-                <?php echo strip_tags($item->description); ?><br/>
+    if (strip_tags($item->description) != NULL) {
+    $cardnumber++;
+    ?>
+    
+    <card id="Card<?php echo $cardnumber ?>" title="<?php echo $item->title ?>">
+        <p align="left">
+            <?php echo strip_tags($item->description); ?><br/>
             <anchor title="Ok">OK<go href="#Main" method="get" sendreferer="false"/></anchor>
         </p>
-        </card>
+    </card>
+    
     <?php }
-} ?>
+
+        if ($cardnumber == $max_elements) {
+            break;
+        }
+    }
+?>
 </wml>
