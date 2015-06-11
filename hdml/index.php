@@ -1,7 +1,6 @@
 <?php
-$url = "http://clarin.feedsportal.com/c/33088/f/577682/index.rss";
-$max_elements = 4;
-
+include '../config.php';
+include '../functions.php';
 
 $curl = curl_init();
 
@@ -21,14 +20,12 @@ if ($xml === false) {
     echo "Failed loading XML\n";
     foreach (libxml_get_errors() as $error) {
         echo "\t", $error->message;
-        die();
     }
+    die();
 }
 
 header("Content-type: text/x-hdml");
 header('Content-Disposition: inline; filename="index.hdml"');
-
-ob_start('ob_gzhandler');
 
 echo "<?xml version=\"1.0\"?>\n";
 ?>
@@ -41,7 +38,7 @@ echo "<?xml version=\"1.0\"?>\n";
         foreach ($xml->channel->item as $item) {
 
 
-            if (strip_tags($item->description) != NULL) {
+            if (mobile_cleanup($item->description) != NULL) {
                 $cardnumber++;
                 $accesskey++;
 
@@ -57,13 +54,13 @@ echo "<?xml version=\"1.0\"?>\n";
     <?php
     $cardnumber = 1;
     foreach ($xml->channel->item as $item) {
-       
 
-        if (strip_tags($item->description) != NULL) {
+
+        if (mobile_cleanup($item->description) != NULL) {
             $cardnumber++;
             $accesskey++;
 
-            echo '<DISPLAY NAME="card' . $cardnumber . '">' . strip_tags($item->description) . '</DISPLAY>' . PHP_EOL;
+            echo '<DISPLAY NAME="card' . $cardnumber . '">' . mobile_cleanup($item->description) . '</DISPLAY>' . PHP_EOL;
         }
 
         if ($cardnumber == $max_elements) {

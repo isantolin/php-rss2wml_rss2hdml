@@ -1,7 +1,6 @@
 <?php
-$url = "http://clarin.feedsportal.com/c/33088/f/577682/index.rss";
-$max_elements = 4;
-
+include '../config.php';
+include '../functions.php';
 
 $curl = curl_init();
 
@@ -21,8 +20,8 @@ if ($xml === false) {
     echo "Failed loading XML\n";
     foreach (libxml_get_errors() as $error) {
         echo "\t", $error->message;
-        die();
     }
+    die();
 }
 
 
@@ -32,48 +31,49 @@ echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 <!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN" "http://www.wapforum.org/DTD/wml_1.1.xml"> 
 <wml>
     <card title="Card1" id="Main" newcontext="false" ordered="true">
-        <p align="center">
-            <strong><?php echo $xml->channel->title; ?></strong>
-        </p>
-        <p align="left">
-            <?php
-            $cardnumber = 1;
+    <p align="center">
+        <strong><?php echo $xml->channel->title; ?></strong>
+    </p>
+    <p align="left">
+        <?php
+        $cardnumber = 1;
 
-            foreach ($xml->channel->item as $item) {
+        foreach ($xml->channel->item as $item) {
 
-                if (strip_tags($item->description) != NULL) {
-                    $cardnumber++;
-                    echo '<a href="#Card' . $cardnumber . '">' . $item->title . '</a><br/><br/>' . PHP_EOL;
-                }
-
-                if ($cardnumber == $max_elements) {
-                    break;
-                }
+            if (mobile_cleanup($item->description) != NULL) {
+                $cardnumber++;
+                echo '<a href="#Card' . $cardnumber . '">' . $item->title . '</a><br/><br/>' . PHP_EOL;
             }
-            ?>
-        </p>
+
+            if ($cardnumber == $max_elements) {
+                break;
+            }
+        }
+        ?>
+    </p>
     </card>
 
-<?php
+    <?php
     $cardnumber = 1;
     foreach ($xml->channel->item as $item) {
 
-    if (strip_tags($item->description) != NULL) {
-    $cardnumber++;
-    ?>
-    
-    <card id="Card<?php echo $cardnumber ?>" title="<?php echo $item->title ?>">
-        <p align="left">
-            <?php echo strip_tags($item->description); ?><br/>
+        if (mobile_cleanup($item->description) != NULL) {
+            $cardnumber++;
+            ?>
+
+            <card id="Card<?php echo $cardnumber ?>" title="<?php echo $item->title ?>">
+            <p align="left">
+                <?php echo mobile_cleanup($item->description); ?><br/>
             <anchor title="Ok">OK<go href="#Main" method="get" sendreferer="false"/></anchor>
         </p>
-    </card>
-    
-    <?php }
+        </card>
 
-        if ($cardnumber == $max_elements) {
-            break;
-        }
+        <?php
     }
+
+    if ($cardnumber == $max_elements) {
+        break;
+    }
+}
 ?>
 </wml>
