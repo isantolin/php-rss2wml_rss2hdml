@@ -7,7 +7,7 @@ $curl = curl_init();
 curl_setopt_array($curl, Array(
     CURLOPT_URL => $url,
     CURLOPT_RETURNTRANSFER => TRUE,
-    CURLOPT_ENCODING => 'UTF-8'
+    CURLOPT_ENCODING => $encoding
 ));
 
 $data = curl_exec($curl);
@@ -25,8 +25,8 @@ if ($xml === false) {
 }
 
 
-header("Content-type: text/vnd.wap.wml; charset=UTF-8");
-echo "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
+header('Content-type: text/vnd.wap.wml; charset='.$encoding);
+echo '<?xml version="1.0" encoding="' . $encoding . '"?>' . PHP_EOL;
 ?>
 <!DOCTYPE wml PUBLIC "-//WAPFORUM//DTD WML 1.1//EN" "http://www.wapforum.org/DTD/wml_1.1.xml"> 
 <wml>
