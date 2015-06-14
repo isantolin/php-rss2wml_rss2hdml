@@ -2,27 +2,9 @@
 include '../config.php';
 include '../functions.php';
 
-$curl = curl_init();
+$xml = curl_get_xml($url, $encoding);
 
-curl_setopt_array($curl, Array(
-    CURLOPT_URL => $url,
-    CURLOPT_RETURNTRANSFER => TRUE,
-    CURLOPT_ENCODING => 'UTF-8'
-));
-
-$data = curl_exec($curl);
-curl_close($curl);
-
-libxml_use_internal_errors(true);
-$xml = simplexml_load_string($data);
-
-if ($xml === false) {
-    echo "Failed loading XML\n";
-    foreach (libxml_get_errors() as $error) {
-        echo "\t", $error->message;
-    }
-    die();
-}
+curl_manage_error($xml);
 
 header("Content-type: text/x-hdml");
 header('Content-Disposition: inline; filename="index.hdml"');
