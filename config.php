@@ -1,4 +1,4 @@
 <?php
-$url = "http://clarin.feedsportal.com/c/33088/f/577682/index.rss";
+$url = "http://www.clarin.com/rss/lo-ultimo/";
 $max_elements = 4;
 $encoding = "UTF-8";
